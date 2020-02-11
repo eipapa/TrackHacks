@@ -1,6 +1,6 @@
 # WoC Hackathon's TrackHacks project
 # Authors: Alexander Nolte, and Ei Pa Pa Pe-Than
- 
+
 import sys
 import os
 import math
@@ -62,7 +62,7 @@ def getC2P(inputfile):
 	start_from = 9000
 
 	woc_commits = pd.read_csv(inputfile, sep=',')
-	
+
 	if start_from == 0:
 		woc_commits['is_in_other_projects'] = 0
 		woc_commits['number_of_other_projects_it_is_in'] = 0
@@ -78,7 +78,7 @@ def getC2P(inputfile):
 				woc_commits.at[index, 'is_in_other_projects'] = 1
 				woc_commits.at[index, 'number_of_other_projects_it_is_in'] = len(project_url_array) - 1
 				woc_commits.at[index, 'urls_of_other_projects_it_is_in'] = project_url_array[1:]
-			
+
 			if index > start_from+2 and index % 1000 == 0:
 				print('***** saving')
 				woc_commits.to_csv('woc-commits.csv', sep=',', index=False, encoding='utf-8')
@@ -88,9 +88,9 @@ def getC2P(inputfile):
 def getP2C(inputfile):
 	woc_urls = pd.read_csv(inputfile, sep=',')
 
-	df_columns = ['devpost_id', 'woc_url', 'hackathon_id', 'commit_sha']
+	df_columns = ['devpost_id', 'github_url', 'woc_url', 'commit_sha']
 	woc_commits = pd.DataFrame(columns = df_columns)
-	
+
 	for index, row in woc_urls.iterrows():
 		print('index: '+str(index)+' @ '+str(datetime.now().strftime("%H:%M:%S")))
 		process = subprocess.Popen('echo '+str(row['woc_url'])+' | ~/lookup/getValues p2c', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
@@ -108,7 +108,7 @@ def getB2C(directory):
 	# old
 	start_filename = 'burnt.csv'
 	not_yet = False
-	
+
 	for filename in os.listdir(directory):
 		if filename.endswith('.csv'):
 			if filename == start_filename:
@@ -132,7 +132,7 @@ def getB2C(directory):
 					else:
 						project_commits.at[index, 'commits_containing_blob'] = out.rstrip()
 					project_commits.at[index, 'number_of_commits_containing_blob'] = len(out.rstrip().split(';'))-1
-				
+
 				project_commits.to_csv(directory+'/'+filename, sep=',', index=False, encoding='utf-8')
 				print('end '+str(filename+' @ '+str(datetime.now().strftime("%H:%M:%S"))))
 				print('*************************')
@@ -182,3 +182,5 @@ elif sys.argv[1] == 'commit_content':
 
 #echo e4af89166a17785c1d741b8b1d5775f3223f510f | ~/lookup/getValues c2p (project from commit)
 #"Commit-ID";#ofProjects;ProjectNames
+
+#python grab_data.py p2c
